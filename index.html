@@ -10,7 +10,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -21,7 +21,7 @@
             padding: 20px;
             color: white;
         }
-        
+
         .container {
             width: 100%;
             max-width: 400px;
@@ -31,14 +31,14 @@
             padding: 30px;
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         }
-        
+
         h1 {
             text-align: center;
             margin-bottom: 30px;
             font-size: 28px;
             font-weight: 600;
         }
-        
+
         .record-button {
             width: 120px;
             height: 120px;
@@ -53,16 +53,16 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
-        
+
         .record-button:hover {
             transform: scale(1.05);
         }
-        
+
         .record-button.recording {
             background: #ff4444;
             animation: pulse 1.5s infinite;
         }
-        
+
         @keyframes pulse {
             0% {
                 box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
@@ -74,19 +74,19 @@
                 box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
             }
         }
-        
+
         .mic-icon {
             width: 50px;
             height: 50px;
         }
-        
+
         .status {
             text-align: center;
             margin-bottom: 20px;
             font-size: 18px;
             min-height: 30px;
         }
-        
+
         .transcript {
             background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
@@ -96,7 +96,7 @@
             white-space: pre-wrap;
             word-wrap: break-word;
         }
-        
+
         .save-button {
             width: 100%;
             padding: 12px;
@@ -108,20 +108,20 @@
             font-size: 16px;
             transition: background 0.3s;
         }
-        
+
         .save-button:hover {
             background: #45a049;
         }
-        
+
         .save-button:disabled {
             background: #cccccc;
             cursor: not-allowed;
         }
-        
+
         .tags-input {
             margin-bottom: 10px;
         }
-        
+
         .mood-select {
             width: 100%;
             padding: 10px;
@@ -131,7 +131,7 @@
             background: rgba(255, 255, 255, 0.9);
             color: #333;
         }
-        
+
         input {
             width: 100%;
             padding: 10px;
@@ -141,13 +141,13 @@
             background: rgba(255, 255, 255, 0.9);
             color: #333;
         }
-        
+
         .error {
             color: #ff6b6b;
             text-align: center;
             margin-top: 10px;
         }
-        
+
         .success {
             color: #51cf66;
             text-align: center;
@@ -158,7 +158,7 @@
 <body>
     <div class="container">
         <h1>🎤 Voice Notes</h1>
-        
+
         <button class="record-button" id="recordButton">
             <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
@@ -167,13 +167,13 @@
                 <line x1="8" y1="23" x2="16" y2="23"></line>
             </svg>
         </button>
-        
+
         <div class="status" id="status">Tap to start recording</div>
-        
+
         <div class="transcript" id="transcript">Your transcribed text will appear here...</div>
-        
+
         <input type="text" class="tags-input" id="tags" placeholder="Tags (comma-separated, optional)" />
-        
+
         <select class="mood-select" id="mood">
             <option value="">Select mood (optional)</option>
             <option value="😊 Happy">😊 Happy</option>
@@ -185,12 +185,12 @@
             <option value="😤 Frustrated">😤 Frustrated</option>
             <option value="🎉 Excited">🎉 Excited</option>
         </select>
-        
+
         <button class="save-button" id="saveButton" disabled>Save to Airtable</button>
-        
+
         <div id="message"></div>
     </div>
-    
+
     <script>
         // ⚠️ REPLACE THESE WITH YOUR ACTUAL VALUES ⚠️
         const AIRTABLE_CONFIG = {
@@ -198,12 +198,12 @@
             baseId: 'apptvhHU42gtxYIGb',  // Your base ID (already filled from your error message)
             tableName: 'Voice Notes'  // Make sure this EXACTLY matches your table name in Airtable
         };
-        
+
         let recognition;
         let isRecording = false;
         let finalTranscript = '';
         let interimTranscript = '';
-        
+
         // Check for speech recognition support
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -211,7 +211,7 @@
             recognition.continuous = true;
             recognition.interimResults = true;
             recognition.lang = 'en-US';
-            
+
             recognition.onresult = (event) => {
                 interimTranscript = '';
                 for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -222,20 +222,20 @@
                         interimTranscript += transcript;
                     }
                 }
-                
+
                 document.getElementById('transcript').textContent = finalTranscript + interimTranscript;
-                
+
                 if (finalTranscript.trim()) {
                     document.getElementById('saveButton').disabled = false;
                 }
             };
-            
+
             recognition.onerror = (event) => {
                 console.error('Speech recognition error', event.error);
                 document.getElementById('status').textContent = 'Error: ' + event.error;
                 stopRecording();
             };
-            
+
             recognition.onend = () => {
                 if (isRecording) {
                     recognition.start(); // Restart if still recording
@@ -245,7 +245,7 @@
             document.getElementById('status').textContent = 'Speech recognition not supported';
             document.getElementById('recordButton').disabled = true;
         }
-        
+
         document.getElementById('recordButton').addEventListener('click', () => {
             if (isRecording) {
                 stopRecording();
@@ -253,57 +253,57 @@
                 startRecording();
             }
         });
-        
+
         function startRecording() {
             finalTranscript = '';
             interimTranscript = '';
             document.getElementById('transcript').textContent = 'Listening...';
             document.getElementById('saveButton').disabled = true;
             document.getElementById('message').textContent = '';
-            
+
             recognition.start();
             isRecording = true;
-            
+
             document.getElementById('recordButton').classList.add('recording');
             document.getElementById('status').textContent = 'Recording... Tap to stop';
         }
-        
+
         function stopRecording() {
             recognition.stop();
             isRecording = false;
-            
+
             document.getElementById('recordButton').classList.remove('recording');
             document.getElementById('status').textContent = 'Tap to start recording';
-            
+
             if (!finalTranscript.trim()) {
                 document.getElementById('transcript').textContent = 'No speech detected. Try again.';
             }
         }
-        
+
         document.getElementById('saveButton').addEventListener('click', async () => {
             const tags = document.getElementById('tags').value;
             const mood = document.getElementById('mood').value;
-            
+
             if (!AIRTABLE_CONFIG.apiKey || AIRTABLE_CONFIG.apiKey === 'patLOlrWgjIOeGYLM.73467a66871774d35aee6e5b4e732bd2757d35e3caf4c8f1d11167fb9469547d') {
                 showMessage('Please add your Airtable API key to the code!', 'error');
                 return;
             }
-            
+
             document.getElementById('saveButton').disabled = true;
             document.getElementById('saveButton').textContent = 'Saving...';
-            
+
             const fields = {
                 Thought: finalTranscript.trim()
             };
-            
+
             if (tags) {
                 fields.Tags = tags.split(',').map(t => t.trim()).filter(t => t);
             }
-            
+
             if (mood) {
                 fields.Mood = mood;
             }
-            
+
             try {
                 // Using the table ID instead of name to avoid encoding issues
                 // First, let's try to get the table ID
@@ -312,9 +312,9 @@
                         'Authorization': `Bearer ${AIRTABLE_CONFIG.apiKey}`
                     }
                 });
-                
+
                 let tableId = AIRTABLE_CONFIG.tableName;
-                
+
                 if (tablesResponse.ok) {
                     const tablesData = await tablesResponse.json();
                     const table = tablesData.tables?.find(t => t.name === AIRTABLE_CONFIG.tableName);
@@ -322,7 +322,7 @@
                         tableId = table.id;
                     }
                 }
-                
+
                 // Now create the record
                 const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_CONFIG.baseId}/${encodeURIComponent(tableId)}`, {
                     method: 'POST',
@@ -334,7 +334,7 @@
                         fields: fields
                     })
                 });
-                
+
                 if (response.ok) {
                     showMessage('✅ Saved successfully!', 'success');
                     // Clear the form
@@ -355,12 +355,12 @@
                 document.getElementById('saveButton').textContent = 'Save to Airtable';
             }
         });
-        
+
         function showMessage(text, type) {
             const messageEl = document.getElementById('message');
             messageEl.textContent = text;
             messageEl.className = type;
-            
+
             if (type === 'success') {
                 setTimeout(() => {
                     messageEl.textContent = '';
