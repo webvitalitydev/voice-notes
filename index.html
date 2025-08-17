@@ -192,11 +192,11 @@
     </div>
 
     <script>
-        // ⚠️ REPLACE THESE WITH YOUR ACTUAL VALUES ⚠️
+        // Your Airtable Configuration
         const AIRTABLE_CONFIG = {
-            apiKey: 'patLOlrWgjIOeGYLM.73467a66871774d35aee6e5b4e732bd2757d35e3caf4c8f1d11167fb9469547d',  // Replace with your token (starts with pat...)
-            baseId: 'apptvhHU42gtxYIGb',  // Your base ID (already filled from your error message)
-            tableName: 'Voice Notes'  // Make sure this EXACTLY matches your table name in Airtable
+            apiKey: 'patLOlrWgjIOeGYLM.73467a66871774d35aee6e5b4e732bd2757d35e3caf4c8f1d11167fb9469547d',
+            baseId: 'apptvhHU42gtxYIGb',
+            tableName: 'Voice Notes'
         };
 
         let recognition;
@@ -283,11 +283,6 @@
         document.getElementById('saveButton').addEventListener('click', async () => {
             const tags = document.getElementById('tags').value;
             const mood = document.getElementById('mood').value;
-
-            if (!AIRTABLE_CONFIG.apiKey || AIRTABLE_CONFIG.apiKey === 'patLOlrWgjIOeGYLM.73467a66871774d35aee6e5b4e732bd2757d35e3caf4c8f1d11167fb9469547d') {
-                showMessage('Please add your Airtable API key to the code!', 'error');
-                return;
-            }
 
             document.getElementById('saveButton').disabled = true;
             document.getElementById('saveButton').textContent = 'Saving...';
